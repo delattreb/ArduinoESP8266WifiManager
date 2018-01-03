@@ -16,7 +16,7 @@ String data, sensor[MAXSENSOR * 2];
 void reconnect() {
 	while (!client.connected()) {
 		Serial.print("Attempting MQTT connection... ");
-		if (client.connect(DEVICE2, TOKEN2, NULL)) {
+		if (client.connect(DEVICE1, TOKEN1, NULL)) {
 			Serial.print("Connected MQTT: ");
 			Serial.println(IP_SERVER);
 		}
