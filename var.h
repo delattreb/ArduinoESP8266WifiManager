@@ -1,26 +1,37 @@
 // VAR
-#define INFO
+
+//#define INFO
+
+// Device selection
+#define HOME
+//#define CESI
+
+
 #define SERIALBAUDS 115200
 
-#define IPLOWA 192
-#define IPLOWB 168
-#define IPLOWC 1
-#define IPLOWD 100
+#pragma region IPDEFINITION
+// IP Start
+#define IPLOWA 10
+#define IPLOWB 0
+#define IPLOWC 0
+#define IPLOWD 1
 
-#define IPHIGHA 192
-#define IPHIGHB 168
-#define IPHIGHC 1
-#define IPHIGHD 150
+// IP End
+#define IPHIGHA 10
+#define IPHIGHB 0
+#define IPHIGHC 0
+#define IPHIGHD 100
+#pragma endregion
 
 #define MQTTPORT 1883
 #define MAXSENSOR 5
 #define IP_SERVER  "mycube.dscloud.me"
 
-// MYDEVICE
-#define TOKEN1 "5XIw0pg3kLHYGFhcuyS5"
-#define DEVICE1 "HomeTH"
-
-// CESI
-#define TOKEN2 "DhkNy1JRH0lfkd0RccDl"
-#define DEVICE2 "CESITH"
-
+#ifdef HOME
+#define TOKEN "5XIw0pg3kLHYGFhcuyS5"
+#define DEVICE "HomeTH"
+#endif 
+#ifdef CESI
+#define TOKEN "DhkNy1JRH0lfkd0RccDl"
+#define DEVICE "CESITH"
+#endif 
