@@ -25,7 +25,8 @@
 
 #define MQTTPORT 1883
 #define MAXSENSOR 5
-#define IP_SERVER  "mycube.dscloud.me"
+//#define IP_SERVER "mycube.dscloud.me"
+#define IP_SERVER "mynascube.ddns.net"
 
 #ifdef HOME
 #define TOKEN "5XIw0pg3kLHYGFhcuyS5"
