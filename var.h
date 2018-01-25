@@ -3,8 +3,8 @@
 //#define INFO
 
 // Device selection
-#define HOME
-//#define CESI
+//#define HOME
+#define CESI
 
 
 #define SERIALBAUDS 115200
