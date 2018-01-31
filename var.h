@@ -20,12 +20,12 @@
 #define IPHIGHA 10
 #define IPHIGHB 0
 #define IPHIGHC 0
-#define IPHIGHD 100
+#define IPHIGHD 1
 #pragma endregion
 
 #define MQTTPORT 1883
 #define MAXSENSOR 5
-//#define IP_SERVER "mycube.dscloud.me"
+
 #define IP_SERVER "mynascube.ddns.net"
 
 #ifdef HOME
@@ -33,6 +33,6 @@
 #define DEVICE "HomeTH"
 #endif 
 #ifdef CESI
-#define TOKEN "DhkNy1JRH0lfkd0RccDl"
+#define TOKEN "CESITH"
 #define DEVICE "CESITH"
 #endif 
