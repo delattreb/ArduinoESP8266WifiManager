@@ -1,13 +1,16 @@
 // VAR
 
-//#define INFO
+#define INFO
+#define DEBUG
 
 // Device selection
 //#define HOME
 #define CESI
 
 
-#define SERIALBAUDS 115200
+#define SERIALBAUDS 9600
+#define NETWORKNAME "ESP Network"
+#define ATTENPTING 10000
 
 #pragma region IPDEFINITION
 // IP Start

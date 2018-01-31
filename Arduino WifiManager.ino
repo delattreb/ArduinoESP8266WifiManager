@@ -10,6 +10,7 @@ WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 String data, sensor[MAXSENSOR * 2];
 const int CHAR = 48;
+int32_t oldRSSI = 0;
 
 //
 // reconnect
@@ -30,26 +31,25 @@ void callback(char* topic, byte* payload, unsigned int length) {
 // reconnect
 //
 void reconnect() {
-	while (!client.connected()) {
+	// Connect to MQTT
+	if (!client.connected()) {
+		Serial.println("WKO");
 #ifdef INFO
-		Serial.print("Attempting MQTT connection... ");
+		Serial.println("Attempting MQTT connection...");
 #endif
-		if (client.connect(DEVICE, TOKEN, NULL)) {
+		while (!client.connected()) {
 #ifdef INFO
-			Serial.print("Connected MQTT: ");
-			Serial.println(IP_SERVER);
+			Serial.print(".");
+			delay(ATTENPTING);
 #endif
+			client.connect(DEVICE, TOKEN, NULL);
 		}
-		else {
 #ifdef INFO
-			Serial.print("Failed, error:");
-			Serial.print(client.state());
-			Serial.println(" Try again in 10 seconds");
+		Serial.println("");
+		Serial.println("Connected");
 #endif
-			delay(10000);
-		}
+		Serial.println("WOK");
 	}
-	Serial.println("WOK");
 }
 
 //
@@ -58,10 +58,22 @@ void reconnect() {
 void setup()
 {
 	Serial.begin(SERIALBAUDS);
-	//digitalWrite(BUILTIN_LED, LOW);
+	while (!Serial) {
+		;
+	}
+#ifdef INFO
+	delay(1500);
+	Serial.print("Core version: ");
+	Serial.println(ESP.getCoreVersion());
+	Serial.print("Sdk version: ");
+	Serial.println(ESP.getSdkVersion());
+#endif 
 	WiFiManager wifiManager;
+	//Reset setting
+	//wifiManager.resetSettings();
+
 	wifiManager.setAPStaticIPConfig(IPAddress(IPLOWA, IPLOWB, IPLOWC, IPLOWD), IPAddress(IPHIGHA, IPHIGHB, IPHIGHC, IPHIGHD), IPAddress(255, 255, 255, 0));
-	if (!wifiManager.autoConnect("Temp/Hum Device")) {
+	if (!wifiManager.autoConnect(NETWORKNAME)) {
 		Serial.println("Failed to connect");
 		delay(1000);
 		ESP.reset();
@@ -70,14 +82,10 @@ void setup()
 	client.setServer(thingsboardServer, MQTTPORT);
 	client.setCallback(callback);
 	reconnect();
-#ifdef INFO
-	Serial.print("Core version: ");
-	Serial.println(ESP.getCoreVersion());
-	Serial.print("Sdk version: ");
-	Serial.println(ESP.getSdkVersion());
-#endif // INFO	//Init sensor
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
 		sensor[i] = "";
+	oldRSSI = WiFi.RSSI();
+
 }
 
 //
@@ -85,12 +93,13 @@ void setup()
 //
 void loop()
 {
-	if (!client.connected()) {
-		Serial.println("WKO");
-		reconnect();
+	reconnect();
+	if (oldRSSI != WiFi.RSSI()) {
+		Serial.println("R" + String(WiFi.RSSI()));
+		oldRSSI = WiFi.RSSI();
 	}
-	client.loop();
-
+	if (client.connected())
+		client.loop();
 	// Check if data available
 	if (Serial.available())
 	{
@@ -98,13 +107,13 @@ void loop()
 		// get data
 		if (data.startsWith("T", 0)) {
 			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length() - 1);
-#ifdef INFO
+#ifdef DEBUG
 			Serial.println(data);
 #endif 
 		}
 		if (data.startsWith("H", 0)) {
 			sensor[int(data[1]) - CHAR] = data.substring(3, data.length() - 1);
-#ifdef INFO
+#ifdef DEBUG
 			Serial.println(data);
 #endif 
 		}
@@ -139,10 +148,12 @@ void sendMQTT(char sensor, String temp, String hum) {
 	// Send payload
 	char attributes[100];
 	payload.toCharArray(attributes, 100);
-	client.publish("v1/devices/me/telemetry", attributes);
-	client.publish("v1/devices/me/attributes", attributes);
+	if (client.connected()) {
+		client.publish("v1/devices/me/telemetry", attributes);
+		client.publish("v1/device/me/attributes", attributes);
+	}
 
-#ifdef INFO
+#ifdef DEBUG
 	Serial.println("Send to MQTT broker:");
 	Serial.println(payload);
 #endif 
