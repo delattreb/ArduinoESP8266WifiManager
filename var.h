@@ -1,12 +1,10 @@
 // VAR
 
-#define INFO
-#define DEBUG
+//#define INFO
+//#define DEBUG
 
 // Device selection
-//#define HOME
-#define CESI
-
+#define HOME
 
 #define SERIALBAUDS 9600
 #define NETWORKNAME "ESP Network"
@@ -34,8 +32,4 @@
 #ifdef HOME
 #define TOKEN "5XIw0pg3kLHYGFhcuyS5"
 #define DEVICE "HomeTH"
-#endif 
-#ifdef CESI
-#define TOKEN "CESITH"
-#define DEVICE "CESITH"
 #endif 

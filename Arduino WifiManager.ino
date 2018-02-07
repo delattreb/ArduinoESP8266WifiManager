@@ -40,9 +40,9 @@ void reconnect() {
 		while (!client.connected()) {
 #ifdef INFO
 			Serial.print(".");
-			delay(ATTENPTING);
 #endif
 			client.connect(DEVICE, TOKEN, NULL);
+			delay(ATTENPTING);
 		}
 #ifdef INFO
 		Serial.println("");
@@ -85,7 +85,6 @@ void setup()
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
 		sensor[i] = "";
 	oldRSSI = WiFi.RSSI();
-
 }
 
 //
