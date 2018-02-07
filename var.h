@@ -26,7 +26,7 @@
 
 #define MQTTPORT 1883
 #define MAXSENSOR 5
-
+#define DB_FREQUENCY 3000
 #define IP_SERVER "mynascube.ddns.net"
 
 #ifdef HOME

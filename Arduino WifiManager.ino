@@ -11,6 +11,8 @@ PubSubClient client(wifiClient);
 String data, sensor[MAXSENSOR * 2];
 const int CHAR = 48;
 int32_t oldRSSI = 0;
+static unsigned long previousMillis = 0;
+unsigned long currentMillis;
 
 //
 // reconnect
@@ -33,7 +35,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
 	// Connect to MQTT
 	if (!client.connected()) {
-		Serial.println("WKO");
 #ifdef INFO
 		Serial.println("Attempting MQTT connection...");
 #endif
@@ -41,6 +42,7 @@ void reconnect() {
 #ifdef INFO
 			Serial.print(".");
 #endif
+			Serial.println("K");
 			client.connect(DEVICE, TOKEN, NULL);
 			delay(ATTENPTING);
 		}
@@ -48,7 +50,7 @@ void reconnect() {
 		Serial.println("");
 		Serial.println("Connected");
 #endif
-		Serial.println("WOK");
+		Serial.println("O");
 	}
 }
 
@@ -92,10 +94,14 @@ void setup()
 //
 void loop()
 {
+	currentMillis = millis();
 	reconnect();
-	if (oldRSSI != WiFi.RSSI()) {
-		Serial.println("R" + String(WiFi.RSSI()));
-		oldRSSI = WiFi.RSSI();
+	if (currentMillis - previousMillis >= DB_FREQUENCY) {
+		if (oldRSSI != WiFi.RSSI()) {
+			Serial.println("S" + String(WiFi.RSSI()));
+			oldRSSI = WiFi.RSSI();
+		}
+		previousMillis = currentMillis;
 	}
 	if (client.connected())
 		client.loop();
@@ -149,7 +155,7 @@ void sendMQTT(char sensor, String temp, String hum) {
 	payload.toCharArray(attributes, 100);
 	if (client.connected()) {
 		client.publish("v1/devices/me/telemetry", attributes);
-		client.publish("v1/device/me/attributes", attributes);
+		client.publish("v1/devices/me/attributes", attributes);
 	}
 
 #ifdef DEBUG
