@@ -43,7 +43,7 @@ void reconnect() {
 			Serial.print(".");
 #endif
 			Serial.println("K");
-			client.connect(DEVICE, TOKEN, NULL);
+			client.connect(NETWORKNAME);
 			delay(ATTENPTING);
 		}
 #ifdef INFO
@@ -136,32 +136,26 @@ void loop()
 // sendMQTT
 //
 void sendMQTT(char sensor, String temp, String hum) {
-	// Prepare a JSON payload string
-	String payload = "{";
-	payload += "\"temperature";
-	payload += sensor;
-	payload += "\":";
-	payload += temp;
-	payload += ",";
-
-	payload += "\"humidity";
-	payload += sensor;
-	payload += "\":";
-	payload += hum;
-	payload += "}";
-
 	// Send payload
-	char attributes[100];
-	payload.toCharArray(attributes, 100);
+	String strT = "iot:t";
+	String strH = "iot:h";
+	char attributest[100];
+	char attributesh[100];
+	temp.toCharArray(attributest, 100);
+	hum.toCharArray(attributesh, 100);
 	if (client.connected()) {
-		client.publish("v1/devices/me/telemetry", attributes);
-		client.publish("v1/devices/me/attributes", attributes);
-	}
-
 #ifdef DEBUG
-	Serial.println("Send to MQTT broker:");
-	Serial.println(payload);
-#endif 
-
+		Serial.println("Before send to MQTT broker:");
+		Serial.println(temp);
+		Serial.println(hum);
+		Serial.println(sensor);
+		Serial.println(attributest);
+		Serial.println(attributesh);
+#endif 	
+		strT.concat(sensor);
+		strH.concat(sensor);
+		client.publish(strT.c_str(), attributest);
+		client.publish(strH.c_str(), attributesh);
+	}
 }
 

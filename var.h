@@ -1,13 +1,11 @@
 // VAR
 
-//#define INFO
-//#define DEBUG
+#define INFO
+#define DEBUG
 
 // Device selection
-#define HOME
-
 #define SERIALBAUDS 9600
-#define NETWORKNAME "ESP Network"
+#define NETWORKNAME "ESP Sejour"
 #define ATTENPTING 10000
 
 #pragma region IPDEFINITION
@@ -27,9 +25,5 @@
 #define MQTTPORT 1883
 #define MAXSENSOR 5
 #define DB_FREQUENCY 3000
-#define IP_SERVER "mynascube.ddns.net"
+#define IP_SERVER "mycube.dscloud.me"
 
-#ifdef HOME
-#define TOKEN "5XIw0pg3kLHYGFhcuyS5"
-#define DEVICE "HomeTH"
-#endif 
