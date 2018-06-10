@@ -1,11 +1,11 @@
 // VAR
 
-#define INFO
-#define DEBUG
+//#define INFO
+//#define DEBUG
 
 // Device selection
 #define SERIALBAUDS 9600
-#define NETWORKNAME "ESP Sejour"
+#define NETWORKNAME "ESP Ch Chloe"
 #define ATTENPTING 10000
 
 #pragma region IPDEFINITION
