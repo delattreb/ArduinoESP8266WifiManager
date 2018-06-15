@@ -5,7 +5,7 @@
 
 // Device selection
 #define SERIALBAUDS 9600
-#define NETWORKNAME "ESP Ch Chloe"
+#define NETWORKNAME "ESP Cave"
 #define ATTENPTING 10000
 
 #pragma region IPDEFINITION
