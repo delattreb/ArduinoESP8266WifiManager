@@ -5,7 +5,10 @@
 
 // Device selection
 #define SERIALBAUDS 9600
-#define NETWORKNAME "ESP Cave"
+
+#define NETWORKNAME "ESP Bureau"
+//#define NETWORKNAME "ESP Sejour"
+//#define NETWORKNAME "ESP Cave"
 #define ATTENPTING 10000
 
 #pragma region IPDEFINITION
@@ -25,5 +28,5 @@
 #define MQTTPORT 1883
 #define MAXSENSOR 5
 #define DB_FREQUENCY 3000
-#define IP_SERVER "192.169.1.15"
+#define IP_SERVER "mycube.dscloud.me"
 
