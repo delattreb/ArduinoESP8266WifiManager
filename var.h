@@ -8,7 +8,8 @@
 
 //#define NETWORKNAME "ESP Bureau"
 //#define NETWORKNAME "ESP Sejour"
-#define NETWORKNAME "ESP Cave"
+//#define NETWORKNAME "ESP Cave"
+#define NETWORKNAME "ESP Nomade"
 #define ATTENPTING 10000
 
 #pragma region IPDEFINITION
