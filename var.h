@@ -26,8 +26,8 @@
 #define IPHIGHD 1
 #pragma endregion
 
-//#define MQTTPORT 1883
 #define MAXSENSOR 5
 #define DB_FREQUENCY 3000
-//#define IP_SERVER "mycube.dscloud.me"
+#define MQTTPORT 1883
+#define IP_SERVER "mycube.dscloud.me"
 

@@ -5,7 +5,7 @@
 #include <PubSubClient.h>
 #include "var.h"
 
-//char thingsboardServer[] = IP_SERVER;
+char thingsboardServer[] = IP_SERVER;
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 String data, sensor[MAXSENSOR * 2];
@@ -76,7 +76,7 @@ void setup()
 	Serial.print("Sdk version: ");
 	Serial.println(ESP.getSdkVersion());
 #endif
-	char mqtt_port[5];
+	char mqtt_port[6];
 	char mqtt_server[40];
 	WiFiManager wifiManager;
 	//Reset setting
@@ -89,7 +89,7 @@ void setup()
 	wifiManager.addParameter(&custom_mqtt_server);
 
 	//MQTT Port
-	WiFiManagerParameter custom_mqtt_port("server", "mqtt port", mqtt_port, 5);
+	WiFiManagerParameter custom_mqtt_port("server", "mqtt port", mqtt_port, 6);
 	wifiManager.addParameter(&custom_mqtt_port);
 
 	if (!wifiManager.autoConnect(NETWORKNAME))
@@ -100,7 +100,7 @@ void setup()
 		delay(5000);
 	}
 
-	client.setServer(mqtt_server, int(custom_mqtt_port.getValue()));
+	client.setServer(custom_mqtt_server.getValue(), int(1883));
 	client.setCallback(callback);
 	reconnect();
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
