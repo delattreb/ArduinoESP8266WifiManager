@@ -1,7 +1,5 @@
-#include <ESP8266WiFi.h>          
-#include <DNSServer.h>
-#include <ESP8266WebServer.h>
-#include <WiFiManager.h>   
+#include <ESP8266WiFi.h>
+#include <WiFiManager.h>
 #include <PubSubClient.h>
 #include "var.h"
 
@@ -17,12 +15,14 @@ unsigned long currentMillis;
 //
 // reconnect
 //
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char *topic, byte *payload, unsigned int length)
+{
 #ifdef INFO
 	Serial.print("Message arrived [");
 	Serial.print(topic);
 	Serial.print("] ");
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < length; i++)
+	{
 		Serial.print((char)payload[i]);
 	}
 	Serial.println();
@@ -32,13 +32,16 @@ void callback(char* topic, byte* payload, unsigned int length) {
 //
 // reconnect
 //
-void reconnect() {
+void reconnect()
+{
 	// Connect to MQTT
-	if (!client.connected()) {
+	if (!client.connected())
+	{
 #ifdef INFO
 		Serial.println("Attempting MQTT connection...");
 #endif
-		while (!client.connected()) {
+		while (!client.connected())
+		{
 #ifdef INFO
 			Serial.print(".");
 #endif
@@ -60,7 +63,8 @@ void reconnect() {
 void setup()
 {
 	Serial.begin(SERIALBAUDS);
-	while (!Serial) {
+	while (!Serial)
+	{
 		;
 	}
 #ifdef INFO
@@ -69,20 +73,35 @@ void setup()
 	Serial.println(ESP.getCoreVersion());
 	Serial.print("Sdk version: ");
 	Serial.println(ESP.getSdkVersion());
-#endif 
+#endif
 	WiFiManager wifiManager;
 	//Reset setting
 	//wifiManager.resetSettings();
 
 	wifiManager.setAPStaticIPConfig(IPAddress(IPLOWA, IPLOWB, IPLOWC, IPLOWD), IPAddress(IPHIGHA, IPHIGHB, IPHIGHC, IPHIGHD), IPAddress(255, 255, 255, 0));
-	if (!wifiManager.autoConnect(NETWORKNAME)) {
+	wifiManager.setDebugOutput(false);
+	//Add Custom parmeters
+	//MQTT Server
+	//WiFiManagerParameter custom_mqtt_server("server", "mqtt server", mqtt_server, 40);
+	//wifiManager.addParameter(&custom_mqtt_server);
+
+	//MQTT Port
+	//WiFiManagerParameter custom_mqtt_port("port", "mqtt port", mqtt_port, 5);
+	//wifiManager.addParameter(&custom_mqtt_port);
+
+	if (!wifiManager.autoConnect(NETWORKNAME))
+	{
 		Serial.println("Failed to connect");
 		delay(1000);
 		ESP.reset();
 		delay(5000);
 	}
-	client.setServer(thingsboardServer, MQTTPORT);
-	client.setCallback(callback);
+	//Get saved parameter
+	//thingsboardServer = custom_mqtt_server.getValue();
+	//int mqtt_port = custom_mqtt_port.getValue();
+
+	//client.setServer(thingsboardServer, mqtt_port);
+	//client.setCallback(callback);
 	reconnect();
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
 		sensor[i] = "";
@@ -96,8 +115,10 @@ void loop()
 {
 	currentMillis = millis();
 	reconnect();
-	if (currentMillis - previousMillis >= DB_FREQUENCY) {
-		if (oldRSSI != WiFi.RSSI()) {
+	if (currentMillis - previousMillis >= DB_FREQUENCY)
+	{
+		if (oldRSSI != WiFi.RSSI())
+		{
 			Serial.println("S" + String(WiFi.RSSI()));
 			oldRSSI = WiFi.RSSI();
 		}
@@ -110,22 +131,25 @@ void loop()
 	{
 		data = Serial.readString();
 		// get data
-		if (data.startsWith("T", 0)) {
+		if (data.startsWith("T", 0))
+		{
 			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length() - 1);
 #ifdef DEBUG
 			Serial.println(data);
-#endif 
+#endif
 		}
-		if (data.startsWith("H", 0)) {
+		if (data.startsWith("H", 0))
+		{
 			sensor[int(data[1]) - CHAR] = data.substring(3, data.length() - 1);
 #ifdef DEBUG
 			Serial.println(data);
-#endif 
+#endif
 		}
 	}
 
 	// Transmit Data
-	if (sensor[int(data[1]) - CHAR - 1].length() > 0 && sensor[int(data[1]) - CHAR].length() > 0) {
+	if (sensor[int(data[1]) - CHAR - 1].length() > 0 && sensor[int(data[1]) - CHAR].length() > 0)
+	{
 		sendMQTT(data[1], sensor[int(data[1]) - CHAR - 1], sensor[int(data[1]) - CHAR]);
 		sensor[int(data[1]) - CHAR - 1] = "";
 		sensor[int(data[1]) - CHAR] = "";
@@ -135,7 +159,8 @@ void loop()
 //
 // sendMQTT
 //
-void sendMQTT(char sensor, String temp, String hum) {
+void sendMQTT(char sensor, String temp, String hum)
+{
 	// Send payload
 	String strT = "iot:t";
 	String strH = "iot:h";
@@ -143,7 +168,8 @@ void sendMQTT(char sensor, String temp, String hum) {
 	char attributesh[100];
 	temp.toCharArray(attributest, 100);
 	hum.toCharArray(attributesh, 100);
-	if (client.connected()) {
+	if (client.connected())
+	{
 #ifdef DEBUG
 		Serial.println("Before send to MQTT broker:");
 		Serial.println(temp);
@@ -151,11 +177,10 @@ void sendMQTT(char sensor, String temp, String hum) {
 		Serial.println(sensor);
 		Serial.println(attributest);
 		Serial.println(attributesh);
-#endif 	
+#endif
 		strT.concat(sensor);
 		strH.concat(sensor);
 		client.publish(strT.c_str(), attributest);
 		client.publish(strH.c_str(), attributesh);
 	}
 }
-

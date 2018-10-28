@@ -291,3 +291,7 @@ __pycache__/
 Arduino WifiManager\.vcxproj
 
 *.vcxproj
+
+\.vscode/c_cpp_properties\.json
+
+\.vscode/
