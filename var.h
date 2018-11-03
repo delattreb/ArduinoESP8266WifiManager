@@ -2,6 +2,7 @@
 
 //#define INFO
 //#define DEBUG
+//#define WIFIDEBUG
 
 // Device selection
 #define SERIALBAUDS 9600
@@ -10,7 +11,7 @@
 //#define NETWORKNAME "ESP Sejour"
 //#define NETWORKNAME "ESP Cave"
 #define NETWORKNAME "ESP Nomade"
-#define ATTENPTING 10000
+#define ATTENPTING 2000
 
 #pragma region IPDEFINITION
 // IP Start

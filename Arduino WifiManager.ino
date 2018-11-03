@@ -3,7 +3,7 @@
 #include <PubSubClient.h>
 #include "var.h"
 
-char thingsboardServer[] = IP_SERVER;
+char nodeServer[] = IP_SERVER;
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 String data, sensor[MAXSENSOR * 2];
@@ -17,16 +17,6 @@ unsigned long currentMillis;
 //
 void callback(char *topic, byte *payload, unsigned int length)
 {
-#ifdef INFO
-	Serial.print("Message arrived [");
-	Serial.print(topic);
-	Serial.print("] ");
-	for (int i = 0; i < length; i++)
-	{
-		Serial.print((char)payload[i]);
-	}
-	Serial.println();
-#endif
 }
 
 //
@@ -63,12 +53,9 @@ void reconnect()
 void setup()
 {
 	Serial.begin(SERIALBAUDS);
-	while (!Serial)
-	{
-		;
-	}
+	while (!Serial) continue;
 #ifdef INFO
-	delay(1500);
+	delay(5000);
 	Serial.print("Core version: ");
 	Serial.println(ESP.getCoreVersion());
 	Serial.print("Sdk version: ");
@@ -79,29 +66,24 @@ void setup()
 	//wifiManager.resetSettings();
 
 	wifiManager.setAPStaticIPConfig(IPAddress(IPLOWA, IPLOWB, IPLOWC, IPLOWD), IPAddress(IPHIGHA, IPHIGHB, IPHIGHC, IPHIGHD), IPAddress(255, 255, 255, 0));
+#ifdef WIFIDEBUG
+	wifiManager.setDebugOutput(true);
+#else
 	wifiManager.setDebugOutput(false);
-	//Add Custom parmeters
-	//MQTT Server
-	//WiFiManagerParameter custom_mqtt_server("server", "mqtt server", mqtt_server, 40);
-	//wifiManager.addParameter(&custom_mqtt_server);
-
-	//MQTT Port
-	//WiFiManagerParameter custom_mqtt_port("port", "mqtt port", mqtt_port, 5);
-	//wifiManager.addParameter(&custom_mqtt_port);
+#endif
 
 	if (!wifiManager.autoConnect(NETWORKNAME))
 	{
+#ifdef DEBUG
 		Serial.println("Failed to connect");
+#endif
 		delay(1000);
 		ESP.reset();
 		delay(5000);
 	}
-	//Get saved parameter
-	//thingsboardServer = custom_mqtt_server.getValue();
-	//int mqtt_port = custom_mqtt_port.getValue();
 
-	//client.setServer(thingsboardServer, mqtt_port);
-	//client.setCallback(callback);
+	client.setServer(nodeServer, MQTTPORT);
+	client.setCallback(callback);
 	reconnect();
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
 		sensor[i] = "";
