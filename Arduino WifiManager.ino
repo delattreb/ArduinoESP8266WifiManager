@@ -36,7 +36,7 @@ void reconnect()
 			Serial.print(".");
 #endif
 			Serial.println("K");
-			client.connect(NETWORKNAME);
+			client.connect(NETWORKNAME, MQTT_USER, MQTT_PWD);
 			delay(ATTENPTING);
 		}
 #ifdef INFO
