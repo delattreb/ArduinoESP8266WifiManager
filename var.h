@@ -1,8 +1,8 @@
 // VAR
 
-#define INFO
-#define DEBUG
-#define WIFIDEBUG
+//#define INFO
+//#define DEBUG
+//#define WIFIDEBUG
 
 // Device selection
 #define SERIALBAUDS 9600
