@@ -116,14 +116,14 @@ void loop()
 		// get data
 		if (data.startsWith("T", 0))
 		{
-			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length());
+			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length() - 2);
 #ifdef DEBUG
 			Serial.println(data);
 #endif
 		}
 		if (data.startsWith("H", 0))
 		{
-			sensor[int(data[1]) - CHAR] = data.substring(3, data.length());
+			sensor[int(data[1]) - CHAR] = data.substring(3, data.length() - 2);
 #ifdef DEBUG
 			Serial.println(data);
 #endif

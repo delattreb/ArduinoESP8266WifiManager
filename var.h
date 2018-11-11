@@ -27,9 +27,9 @@
 #define IPHIGHD 1
 #pragma endregion
 
-#define MQTTPORT 1883
+#define MQTTPORT 1885
 #define MAXSENSOR 5
-#define DB_FREQUENCY 3000
+#define DB_FREQUENCY 2000
 #define IP_SERVER "192.169.1.46"
 
 // MQTT authentification
