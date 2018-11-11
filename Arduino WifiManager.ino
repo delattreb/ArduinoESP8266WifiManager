@@ -28,6 +28,7 @@ void reconnect()
 	// Connect to MQTT
 	if (!client.connected())
 	{
+		Serial.println("MK");
 #ifdef INFO
 		Serial.println("Attempting MQTT connection...");
 #endif
@@ -44,7 +45,7 @@ void reconnect()
 		Serial.println("");
 		Serial.println("Connected");
 #endif
-		Serial.println("O");
+		Serial.println("MO");
 	}
 }
 
@@ -55,6 +56,7 @@ void setup()
 {
 	Serial.begin(SERIALBAUDS);
 	while (!Serial) continue;
+	Serial.println("WK");
 #ifdef INFO
 	delay(5000);
 	Serial.print("Core version: ");
@@ -82,7 +84,7 @@ void setup()
 		ESP.reset();
 		delay(5000);
 	}
-
+	Serial.println("WO");
 	client.setServer(nodeServer, MQTTPORT);
 	client.setCallback(callback);
 	reconnect();
