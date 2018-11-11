@@ -9,12 +9,11 @@ WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 String data, sensor[MAXSENSOR * 2];
 const int CHAR = 48;
-int32_t oldRSSI = 0;
 static unsigned long previousMillis = 0;
 unsigned long currentMillis;
 
 //
-// reconnect
+// callback
 //
 void callback(char *topic, byte *payload, unsigned int length)
 {
@@ -28,7 +27,6 @@ void reconnect()
 	// Connect to MQTT
 	if (!client.connected())
 	{
-		Serial.println("MK");
 #ifdef INFO
 		Serial.println("Attempting MQTT connection...");
 #endif
@@ -37,9 +35,9 @@ void reconnect()
 #ifdef INFO
 			Serial.print(".");
 #endif
-			Serial.println("K");
 			client.connect(NETWORKNAME, MQTT_USER, MQTT_PWD);
 			delay(ATTENPTING);
+			Serial.println("MK");
 		}
 #ifdef INFO
 		Serial.println("");
@@ -90,7 +88,6 @@ void setup()
 	reconnect();
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
 		sensor[i] = "";
-	oldRSSI = WiFi.RSSI();
 }
 
 //
@@ -102,11 +99,7 @@ void loop()
 	reconnect();
 	if (currentMillis - previousMillis >= DB_FREQUENCY)
 	{
-		if (oldRSSI != WiFi.RSSI())
-		{
-			Serial.println("S" + String(WiFi.RSSI()));
-			oldRSSI = WiFi.RSSI();
-		}
+		Serial.println("S" + String(WiFi.RSSI()));
 		previousMillis = currentMillis;
 	}
 	if (client.connected())
@@ -182,5 +175,5 @@ void sendMQTT(char sensor, String temp, String hum)
 		Serial.println(attrh);
 		Serial.println(sensor);
 #endif
-	}
+}
 }
