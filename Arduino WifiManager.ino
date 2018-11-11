@@ -36,8 +36,9 @@ void reconnect()
 			Serial.print(".");
 #endif
 			client.connect(NETWORKNAME, MQTT_USER, MQTT_PWD);
-			delay(ATTENPTING);
 			Serial.println("MK");
+			delay(ATTENPTING);
+			Serial.println("S" + String(WiFi.RSSI()));
 		}
 #ifdef INFO
 		Serial.println("");
