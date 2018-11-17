@@ -32,13 +32,10 @@ void reconnect()
 #endif
 		while (!client.connected())
 		{
-#ifdef INFO
-			Serial.print(".");
-#endif
 			client.connect(NETWORKNAME, MQTT_USER, MQTT_PWD);
 			Serial.println("MK");
 			delay(ATTENPTING);
-			Serial.println("S" + String(WiFi.RSSI()));
+			Serial.println("S" + String(abs(WiFi.RSSI())));
 		}
 #ifdef INFO
 		Serial.println("");
@@ -62,6 +59,8 @@ void setup()
 	Serial.println(ESP.getCoreVersion());
 	Serial.print("Sdk version: ");
 	Serial.println(ESP.getSdkVersion());
+	Serial.print("MAC: ");
+	Serial.println(WiFi.macAddress());
 #endif
 	WiFiManager wifiManager;
 	//Reset setting
