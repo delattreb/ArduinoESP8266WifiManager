@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiManager.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 #include "var.h"
 
 char nodeServer[] = IP_SERVER;
@@ -8,12 +9,11 @@ WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 String data, sensor[MAXSENSOR * 2];
 const int CHAR = 48;
-int32_t oldRSSI = 0;
 static unsigned long previousMillis = 0;
 unsigned long currentMillis;
 
 //
-// reconnect
+// callback
 //
 void callback(char *topic, byte *payload, unsigned int length)
 {
@@ -32,18 +32,16 @@ void reconnect()
 #endif
 		while (!client.connected())
 		{
-#ifdef INFO
-			Serial.print(".");
-#endif
-			Serial.println("K");
 			client.connect(NETWORKNAME, MQTT_USER, MQTT_PWD);
+			Serial.println("MK");
 			delay(ATTENPTING);
+			Serial.println("S" + String(abs(WiFi.RSSI())));
 		}
 #ifdef INFO
 		Serial.println("");
 		Serial.println("Connected");
 #endif
-		Serial.println("O");
+		Serial.println("MO");
 	}
 }
 
@@ -54,12 +52,15 @@ void setup()
 {
 	Serial.begin(SERIALBAUDS);
 	while (!Serial) continue;
+	Serial.println("WK");
 #ifdef INFO
 	delay(5000);
 	Serial.print("Core version: ");
 	Serial.println(ESP.getCoreVersion());
 	Serial.print("Sdk version: ");
 	Serial.println(ESP.getSdkVersion());
+	Serial.print("MAC: ");
+	Serial.println(WiFi.macAddress());
 #endif
 	WiFiManager wifiManager;
 	//Reset setting
@@ -81,13 +82,12 @@ void setup()
 		ESP.reset();
 		delay(5000);
 	}
-
+	Serial.println("WO");
 	client.setServer(nodeServer, MQTTPORT);
 	client.setCallback(callback);
 	reconnect();
 	for (int i = 0; i < (MAXSENSOR * 2); i++)
 		sensor[i] = "";
-	oldRSSI = WiFi.RSSI();
 }
 
 //
@@ -99,11 +99,7 @@ void loop()
 	reconnect();
 	if (currentMillis - previousMillis >= DB_FREQUENCY)
 	{
-		if (oldRSSI != WiFi.RSSI())
-		{
-			Serial.println("S" + String(WiFi.RSSI()));
-			oldRSSI = WiFi.RSSI();
-		}
+		Serial.println("S" + String(WiFi.RSSI()));
 		previousMillis = currentMillis;
 	}
 	if (client.connected())
@@ -115,14 +111,14 @@ void loop()
 		// get data
 		if (data.startsWith("T", 0))
 		{
-			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length() - 1);
+			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length() - 2);
 #ifdef DEBUG
 			Serial.println(data);
 #endif
 		}
 		if (data.startsWith("H", 0))
 		{
-			sensor[int(data[1]) - CHAR] = data.substring(3, data.length() - 1);
+			sensor[int(data[1]) - CHAR] = data.substring(3, data.length() - 2);
 #ifdef DEBUG
 			Serial.println(data);
 #endif
@@ -144,25 +140,40 @@ void loop()
 void sendMQTT(char sensor, String temp, String hum)
 {
 	// Send payload
-	String strT = "iot:t";
-	String strH = "iot:h";
-	char attributest[100];
-	char attributesh[100];
-	temp.toCharArray(attributest, 100);
-	hum.toCharArray(attributesh, 100);
-	if (client.connected())
+	String topic = TOPIC_IOT;
+	String str;
+	const int capacity = JSON_OBJECT_SIZE(3);
+	StaticJsonBuffer<capacity> payload;
+	JsonObject& obj = payload.createObject();
+
+	char attrh[100];
+	char attrt[100];
+
+	// Make payload
+	str = "h";
+	str.concat(sensor);
+	obj.set("name", str);
+	obj.set("value", hum.c_str());
+	obj.printTo(attrh, sizeof(attrh));
+	client.publish(topic.c_str(), attrh);
+
+	// Make payload
+	str = "t";
+	str.concat(sensor);
+	obj.set("name", str);
+	obj.set("value", temp.c_str());
+	obj.printTo(attrt, sizeof(attrt));
+	client.publish(topic.c_str(), attrt);
+
+	;	if (client.connected())
 	{
 #ifdef DEBUG
 		Serial.println("Before send to MQTT broker:");
 		Serial.println(temp);
+		Serial.println(attrt);
 		Serial.println(hum);
+		Serial.println(attrh);
 		Serial.println(sensor);
-		Serial.println(attributest);
-		Serial.println(attributesh);
 #endif
-		strT.concat(sensor);
-		strH.concat(sensor);
-		client.publish(strT.c_str(), attributest);
-		client.publish(strH.c_str(), attributesh);
-	}
+}
 }
