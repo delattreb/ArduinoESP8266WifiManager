@@ -39,7 +39,7 @@ void reconnect()
 		}
 #ifdef INFO
 		Serial.println("");
-		Serial.println("Connected");
+		Serial.println("MQTT connected");
 #endif
 		Serial.println("MO");
 	}
@@ -99,7 +99,7 @@ void loop()
 	reconnect();
 	if (currentMillis - previousMillis >= DB_FREQUENCY)
 	{
-		Serial.println("S" + String(WiFi.RSSI()));
+		Serial.println("S" + String(abs(WiFi.RSSI())));
 		previousMillis = currentMillis;
 	}
 	if (client.connected())
