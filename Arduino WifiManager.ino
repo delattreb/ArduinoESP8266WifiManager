@@ -165,7 +165,7 @@ void sendMQTT(char sensor, String temp, String hum)
 	obj.printTo(attrt, sizeof(attrt));
 	client.publish(topic.c_str(), attrt);
 
-	;	if (client.connected())
+	if (client.connected())
 	{
 #ifdef DEBUG
 		Serial.println("Before send to MQTT broker:");
@@ -175,5 +175,5 @@ void sendMQTT(char sensor, String temp, String hum)
 		Serial.println(attrh);
 		Serial.println(sensor);
 #endif
-}
+	}
 }
