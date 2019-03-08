@@ -114,6 +114,7 @@ void loop()
 			sensor[int(data[1]) - CHAR - 1] = data.substring(3, data.length() - 2);
 #ifdef DEBUG
 			Serial.println(data);
+			Serial.println(sensor[int(data[1]) - CHAR - 1]);
 #endif
 		}
 		if (data.startsWith("H", 0))
@@ -121,6 +122,7 @@ void loop()
 			sensor[int(data[1]) - CHAR] = data.substring(3, data.length() - 2);
 #ifdef DEBUG
 			Serial.println(data);
+			Serial.println(sensor[int(data[1]) - CHAR]);
 #endif
 		}
 	}
@@ -142,27 +144,26 @@ void sendMQTT(char sensor, String temp, String hum)
 	// Send payload
 	String topic = TOPIC_IOT;
 	String str;
-	const int capacity = JSON_OBJECT_SIZE(3);
-	StaticJsonBuffer<capacity> payload;
-	JsonObject& obj = payload.createObject();
-
+	StaticJsonDocument<256> doch;
+	StaticJsonDocument<256> doct;
+	
 	char attrh[100];
 	char attrt[100];
 
 	// Make payload
 	str = "h";
 	str.concat(sensor);
-	obj.set("name", str);
-	obj.set("value", hum.c_str());
-	obj.printTo(attrh, sizeof(attrh));
+	doch["name"] = str.c_str();
+	doch["value"] = hum.c_str();
+	serializeJson(doch, attrh);
 	client.publish(topic.c_str(), attrh);
 
 	// Make payload
 	str = "t";
 	str.concat(sensor);
-	obj.set("name", str);
-	obj.set("value", temp.c_str());
-	obj.printTo(attrt, sizeof(attrt));
+	doct["name"] = str.c_str();
+	doct["value"] = temp.c_str();
+	serializeJson(doct, attrt);
 	client.publish(topic.c_str(), attrt);
 
 	if (client.connected())
